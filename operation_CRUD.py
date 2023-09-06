@@ -4,8 +4,6 @@ from tkinter import messagebox
 from tkcalendar import DateEntry
 from hashlib import sha512
 import creation_database
-#import os
-#os.chdir("")
 
 def pdf_creator():
     from reportlab.lib.pagesizes import letter
@@ -789,7 +787,7 @@ def window():
     
     fen.mainloop()
 
-connect=creation_database.database_creator()
+creation_database.database_creator()
 
 window()
 
