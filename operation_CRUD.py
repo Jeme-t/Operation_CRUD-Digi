@@ -3,6 +3,7 @@ import mysql.connector
 from tkinter import messagebox
 from tkcalendar import DateEntry
 from hashlib import sha512
+import creation_database
 #import os
 #os.chdir("")
 
@@ -787,6 +788,8 @@ def window():
     #edit_p(id)
     
     fen.mainloop()
+
+connect=creation_database.database_creator()
 
 window()
 
