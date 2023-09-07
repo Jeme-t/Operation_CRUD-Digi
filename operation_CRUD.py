@@ -4,6 +4,10 @@ from tkinter import messagebox
 from tkcalendar import DateEntry
 from hashlib import sha512
 import creation_database
+import os
+
+directory=os.mkdir("Factures-Imprimées")
+action=os.chdir("Factures-Imprimées") 
 
 def pdf_creator():
     from reportlab.lib.pagesizes import letter
@@ -54,8 +58,6 @@ confirm=0
 def confirm_passw(id):
     global fen
     global cadre
-    print(id)
-    
     cadre=Frame(fen, width= 300, height= 250,bg="#dbbe92")
     cadre.pack(expand=1)
     
@@ -70,7 +72,6 @@ def confirm_passw(id):
         sql="SELECT pass_w FROM utilisateur WHERE id='%s'" %id
         check.execute(sql)
         pass_w_fb=check.fetchone()
-        print(pass_w_fb[0])
         if pass_w!=pass_w_fb[0]:
             resp=Label(cadre, text="Incorrecte", bg="#e5382b")
             resp.pack(expand=1, fill='x', side='top')
@@ -104,14 +105,10 @@ def before_buy(id):
     buy(id)
 
 def pdf_creation(id):
-    
     cursor=db.cursor()
     sql="SELECT * FROM utilisateur WHERE id='%s'"%id
     cursor.execute(sql)
     x=cursor.fetchone()
-    
-    
-    print(id)
     cursor=db.cursor()
     cursor.execute("SELECT * FROM produits WHERE user_id='%s'" %(id))
     contain=cursor.fetchall()
@@ -129,7 +126,6 @@ def pdf_creation(id):
     somme=0
     for num , val in enumerate(contain):
         data.append([val[1],val[2],val[3],val[2]*val[3]])
-        num+=1
         somme+=val[2]*val[3]
     
     data.append(['Montant à Payer :','','',somme])
@@ -187,8 +183,7 @@ def consult(id):
         
     title_1=Label(cadre,text="Prix T", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
     title_1.grid(row=row_l, column=6)
-        
-    print(id)
+    
     cursor=db.cursor()
     cursor.execute("SELECT * FROM produits WHERE user_id='%s'" %(id))
     contain=cursor.fetchall()
@@ -216,21 +211,9 @@ def consult(id):
 
 def buy(id):
     global ent_1
-    #ent_1=ent_1.get()
-    print(ent_1)
-
     global ent_2
-    #ent_2=ent_2.get()
-    print(ent_2)
-
     global ent_3
-    #ent_3=ent_3.get()
-    print(ent_3)
-
     global ent_4
-    #ent_4=ent_4.get()
-    print(ent_4)
-
     global add
     global confirm
     global cadre
@@ -288,20 +271,12 @@ def buy(id):
         global ent_2
         global ent_3
         global ent_4
-        print("Done_1")
         cadre.pack_forget()
-        print("Done_2")
         
         ent_1=ent_1.get()
         ent_2=ent_2.get()
         ent_3=ent_3.get()
         ent_4=ent_4.get()
-        print("Get Done")
-        
-        #def adds_f(id):
-        print(f"C'est {ent_1}")
-        print("Ok")
-        print(f"C'est {id}")
         cursor=db.cursor()
         sql="INSERT INTO produits (libelle, prix_u, qte, description, user_id) VALUES (%s, %s, %s, %s, %s)"
         val=( ent_1, ent_2, ent_3, ent_4, id)
@@ -315,9 +290,6 @@ def buy(id):
     button.place(x=260,y=165)
 
 def edit_user(id):
-    id
-    print(id)
-    
     global cadre
     
     cursor=db.cursor()
@@ -390,8 +362,6 @@ def edit_user(id):
         sql = "UPDATE utilisateur SET nom='%s', prenom='%s', num='%s', date='%s' WHERE id='%s'"%(nom, prenom, num, date, id)
         cursor.execute(sql)
         db.commit()
-        
-        print(f"OK {nom}\t {prenom}\t {num}\t {date} ")
     
     def next_edit():
         set_new_data()
@@ -402,13 +372,10 @@ def edit_user(id):
     confirm.place(x=60,y=165)
 
 def delete_on(id):
-    id
-    print("Alors",id)
     cursor=db.cursor()
     sql=" DELETE  FROM utilisateur WHERE id='%s' "%(id)
     
     cursor.execute(sql)
-    print("Done")
     db.commit()
 
 def confirm_del(id):
@@ -416,15 +383,12 @@ def confirm_del(id):
     if response:
         cadre.pack_forget()
         lambda id=id : delete_on(id)
-        print("Deleting...")
         delete_on(id)
         old_user()
     else:
         print("Ouf")
 
 def next_valid_edit(id):
-        print(f"L'id est {id} ")
-        #lambda id=id: next_valid_edit(id)
         cadre.pack_forget()
         lambda id=id: edit_user(id)
         edit_user(id)
@@ -575,24 +539,17 @@ def new_user():
             #cadre.pack()
 
 def old_user():
-    print(ent_1)
     pseudo=ent_1.get()
-    print(pseudo)
-    #prenom=ent_2.get()
-    #num=ent_3.get()
-    #date=ent_4.get()
     pass_w=ent_2.get()
     pass_w=hasher(pass_w)
     check=db.cursor()
     
     sql= "SELECT COUNT(*) FROM utilisateur WHERE pseudo= '%s' AND pass_w= '%s' " % (pseudo, pass_w)
-    #val=(nom, prenom, pass_w)
     check.execute(sql)
     m= check.fetchone()
     nbre_row=m[0]
     
     if nbre_row!=0 :
-        print(pseudo, pass_w)
         check_id(pseudo, pass_w)
     else :
         inexistant=messagebox.askokcancel("Message","Utilisateur inexistant, veillez vous inscrire \ Identifiants incorrects")
@@ -740,13 +697,11 @@ def sub():
         ent5=ent_5.get()
         ent6=ent_6.get()
         ent7=ent_7.get()
-        print(ent6, ent7)
         
         cursor=db.cursor()
         check_pseudo="SELECT COUNT(*) FROM utilisateur WHERE pseudo='%s'"%ent3
         cursor.execute(check_pseudo)
         nbr=cursor.fetchone()
-        print(nbr)
         
         if ent1=="" or ent2=="" or ent3=="" or ent4=="" or ent5=="" or ent6=="" or ent7=="":
             error=messagebox.showwarning("","Chaque case est obligatoire !!!")
@@ -847,10 +802,3 @@ def window():
 #creation_database.database_creator()
 
 window()
-
-"""
-import all 
-
-ans=all.somme(2,3)
-print(ans)
-"""
