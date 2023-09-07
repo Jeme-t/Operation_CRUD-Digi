@@ -109,27 +109,36 @@ def before_buy(id):
 def consult(id):
         global cadre
         cadre.pack_forget()
-            
+        row_l=0
         cadre=Frame(fen, width= 630, height=10000,bg="silver")
-        cadre.pack(expand=1)
+        cadre.pack(side='top')
         
-        adds=Button(cadre ,text="+",bg="#ffd177" ,font=("times new roman", 14) ,bd=3 ,command=lambda id=id : before_buy(id), relief="solid")
-        adds.place(x=2, y=2)
+        adds=Button(cadre ,text="+",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=lambda id=id : before_buy(id), relief="solid")
+        adds.grid(row=0, column=0)
         
-        button=Button(cadre,text="Deconnexion" ,bg="#ffd177" ,font=("times new roman", 14) ,bd=3 ,command=reset, relief="solid")
-        button.place(x=510 , y=0)
+        button=Button(cadre ,text="Imprimer Facture",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=1, relief="solid")
+        button.grid(row=1, column=0)
         
-        title_1=Label(cadre,text="Nombre", bg="#8D857B", fg="black", font=("Times new roman", 13) , width=11)
-        title_1.place(x=73,y=0)
-            
-        title_1=Label(cadre,text="Libellé", bg="#8D857B", fg="black", font=("Times new roman", 13) , width=12)
-        title_1.place(x=180,y=0)
-                
-        title_1=Label(cadre,text="Prix Unitaire", bg="#8D857B", fg="black", font=("Times new roman", 13) , width=17)
-        title_1.place(x=280,y=0)
-            
-        title_1=Label(cadre,text="Qte", bg="#8D857B", fg="black", font=("Times new roman", 13) , width=10)
-        title_1.place(x=410,y=0)
+        button=Button(cadre ,text="Retour au Profil",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=lambda id=id : profil(id), relief="solid")
+        button.grid(row=2, column=0)
+
+        button=Button(cadre,text="Déconnexion" ,bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , relief="solid", width=17,command=reset)
+        button.grid(row=3, column=0)
+        
+        title_1=Label(cadre,text="Num", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=5)
+        title_1.grid(row=row_l, column=2)
+
+        title_1=Label(cadre,text="Libellé", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=14)
+        title_1.grid(row=row_l, column=3)
+
+        title_1=Label(cadre,text="Prix Unitaire", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
+        title_1.grid(row=row_l, column=4)
+
+        title_1=Label(cadre,text="Qte", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
+        title_1.grid(row=row_l, column=5)
+        
+        title_1=Label(cadre,text="Prix T", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
+        title_1.grid(row=row_l, column=6)
         
         print(id)
         cursor=db.cursor()
@@ -138,20 +147,24 @@ def consult(id):
         #for x in contain:
         z=2
         for num , val in enumerate(contain):
+            row_l+=1
             z+=24
             #print(f"{num+1} \t {val[1]} ")
             
             id_list=Label(cadre, text=f"{num+1}", bg="silver", font=("Times new roman", 13), width=2)
-            id_list.place(x=117, y=z)
-        
+            id_list.grid(row=row_l,column=2 )
+
             list=Label(cadre,text=f"{val[1]}", bg="silver", fg="black", font=("Times new roman", 13) , width=12)
-            list.place(x=190,y=z)
-        
+            list.grid(row=row_l,column=3 )
+
             list=Label(cadre,text=f"{val[2]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
-            list.place(x=290,y=z)
-        
+            list.grid(row=row_l,column=4 )
+
             list=Label(cadre,text=f"{val[3]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
-            list.place(x=410,y=z)
+            list.grid(row=row_l,column=5 )
+            
+            list=Label(cadre,text=f"{val[2]*val[3]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
+            list.grid(row=row_l,column=6 )
 
 def buy(id):
     global ent_1
@@ -368,11 +381,12 @@ def next_valid_edit(id):
         lambda id=id: edit_user(id)
         edit_user(id)
 
+"""
 def nexx(id):
     cadre.pack_forget()
-    print("C'est",id)
-    lambda id=id: edit_user(id)
+    #lambda id=id: edit_user(id)
     edit_user(id)
+"""
 
 def profil(id):
     cursor=db.cursor()
@@ -380,6 +394,7 @@ def profil(id):
     cursor.execute(sql)
     x=cursor.fetchone()
     global cadre
+    cadre.pack_forget()
     cadre=Frame(fen, width= 485, height= 192,bg="#dbbe92")
     cadre.pack(expand=1)
 
@@ -403,11 +418,6 @@ def profil(id):
     
     def next_e_p():
         cadre.pack_forget()
-        #confirm_passw(id)
-        #wait=confirm_passw(id)
-        #print(wait)
-        #if wait==True:
-        #cadre.pack_forget()
         next_valid_edit(id)
     
     def next_e_pw():
@@ -420,7 +430,7 @@ def profil(id):
     button_2=Button(cadre,text="Mot de passe" ,bg="#ffd1aa" ,font=("times new roman", 14) ,bd=3 ,command=next_e_pw, relief="ridge")
     button_2.place(x=190, y=150)
     
-    button_3=Button(cadre,text="Deconnection" ,bg="#ffd177" ,font=("times new roman", 14) ,bd=3 ,command=reset, relief="solid")
+    button_3=Button(cadre,text="Déconnexion" ,bg="#ffd177" ,font=("times new roman", 14) ,bd=3 ,command=reset, relief="solid")
     button_3.place(x=365 , y=150)
     
     button_4=Button(cadre,text="Consulter \n mon Panier" ,bg="#ffd1aa" ,font=("times new roman", 14) ,bd=3 ,command=lambda id= id : consult(id), relief="ridge")
@@ -462,12 +472,14 @@ def edit_p(id):
         cursor.execute(sql)
         old_p_l=cursor.fetchone()
         old_p_fb=old_p_l[0]
-        if old_p_fb==ent_1.get() and ent_2.get()==ent_3.get():
+        x=ent_1.get()
+        x=hasher(x)
+        if old_p_fb==x and ent_2.get()==ent_3.get():
             pass_w=(ent_3.get())
+            pass_w=hasher(pass_w)
             sql="UPDATE utilisateur SET pass_w='%s' WHERE id='%s'"%(pass_w, id)
             cursor.execute(sql)
             db.commit()
-            cadre.pack_forget()
             profil(id)
         else :
             error=messagebox.showwarning("","Faites attention aux mots de passe")
@@ -548,9 +560,9 @@ def check_id(pseudo, pass_w):
     check.execute(sql)
     id_1=check.fetchone()
     id=id_1[0]
-    lambda id=id : profil(id)
     profil(id)
 
+"""
 def inscrits():
     global cadre
     global liste
@@ -610,7 +622,7 @@ def inscrits():
             
         buy_b=Button(cadre, bg="#FFD778", text="Commander", width=10, bd=2, relief="solid", command=lambda id=id: before_buy(id))
         buy_b.place(x=470, y=z)
-
+"""
 def sub():
     global cadre
     global ent_1
@@ -749,7 +761,6 @@ def home():
     cadre=Frame(fen, width= 450, height= 215,bg="#dbbe92")
     #cadre.place(x=10,y=15)
     cadre.pack(expand=1)
-    cadre['relief']=('solid')
         
     fiche_1=Label(cadre, bg="#dbbe92", font=("Times New Roman",29), text="  BIENVENUE  ")
     fiche_1.place(x=90, y=30)
@@ -787,7 +798,7 @@ def window():
     
     fen.mainloop()
 
-creation_database.database_creator()
+#creation_database.database_creator()
 
 window()
 
