@@ -23,9 +23,6 @@ def hasher(valeur):
     mdp_sign = sha512(mdp).hexdigest()
     return mdp_sign
 
-#var=input("Password : ")
-#print(f"Le hash est : \n \t {hasher(var)}")
-
 def ad(x):
     x+=2
     return x
@@ -623,6 +620,7 @@ def inscrits():
         buy_b=Button(cadre, bg="#FFD778", text="Commander", width=10, bd=2, relief="solid", command=lambda id=id: before_buy(id))
         buy_b.place(x=470, y=z)
 """
+
 def sub():
     global cadre
     global ent_1
@@ -793,9 +791,6 @@ def window():
     button=Button(fen,text="Retour à l'acceuil" ,command=reset)
     button.pack(padx=10, pady=10,fill='both', side="bottom" )
     home()
-#    confirm_passw(id)
-    #edit_p(id)
-    
     fen.mainloop()
 
 #creation_database.database_creator()
