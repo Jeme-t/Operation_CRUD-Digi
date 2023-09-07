@@ -6,7 +6,10 @@ from hashlib import sha512
 import creation_database
 import os
 
-directory=os.mkdir("Factures-Imprimées")
+directory=("Factures-Imprimées")
+if not os.path.exists(directory):
+    os.mkdir(directory)
+
 action=os.chdir("Factures-Imprimées") 
 
 def pdf_creator():
