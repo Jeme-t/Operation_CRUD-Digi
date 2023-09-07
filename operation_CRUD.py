@@ -103,65 +103,116 @@ def before_buy(id):
     cadre.pack_forget()
     buy(id)
 
+def pdf_creation(id):
+    
+    cursor=db.cursor()
+    sql="SELECT * FROM utilisateur WHERE id='%s'"%id
+    cursor.execute(sql)
+    x=cursor.fetchone()
+    
+    
+    print(id)
+    cursor=db.cursor()
+    cursor.execute("SELECT * FROM produits WHERE user_id='%s'" %(id))
+    contain=cursor.fetchall()
+    #for x in contain:
+    z=2
+    
+    from reportlab.lib.pagesizes import letter
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+    from reportlab.lib import colors
+    
+    data = [['Facture','', '',''],
+            ['Nom', 'Prenom', 'Numero', 'Date de Naissance'],
+            [x[2], x[3], x[4], x[5]],
+            ['Libellé','Prix U', 'Qte', 'Prix Total']]
+    somme=0
+    for num , val in enumerate(contain):
+        data.append([val[1],val[2],val[3],val[2]*val[3]])
+        num+=1
+        somme+=val[2]*val[3]
+    
+    data.append(['Montant à Payer :','','',somme])
+    
+    pdf_file = f"facture_{x[1]}.pdf"
+    document = SimpleDocTemplate(pdf_file, pagesize=letter)
+    
+    table = Table(data)
+    
+    style = TableStyle([('BACKGROUND', (0, 0), (-1, 3), colors.grey),
+                        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                        ('SPAN', (0,0), (3,0)),
+                        ('SPAN', (0,-1), (2,-1)),
+                        ('BACKGROUND', (0, 3), (-1, -1), colors.beige),
+                        ('GRID', (0, 0), (-1, -1), 1, colors.black)])
+
+    table.setStyle(style)
+    
+    elements = [table]
+    document.build(elements)
+
 def consult(id):
-        global cadre
-        cadre.pack_forget()
-        row_l=0
-        cadre=Frame(fen, width= 630, height=10000,bg="silver")
-        cadre.pack(side='top')
-        
-        adds=Button(cadre ,text="+",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=lambda id=id : before_buy(id), relief="solid")
-        adds.grid(row=0, column=0)
-        
-        button=Button(cadre ,text="Imprimer Facture",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=1, relief="solid")
-        button.grid(row=1, column=0)
-        
-        button=Button(cadre ,text="Retour au Profil",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=lambda id=id : profil(id), relief="solid")
-        button.grid(row=2, column=0)
+    global cadre
+    cadre.pack_forget()
+    row_l=0
+    cadre=Frame(fen, width= 630, height=10000,bg="silver")
+    cadre.pack(side='top')
+    
+    adds=Button(cadre ,text="+",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=lambda id=id : before_buy(id), relief="solid")
+    adds.grid(row=0, column=0)
+    
+    button=Button(cadre ,text="Imprimer Facture",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=lambda id=id : pdf_creation(id), relief="solid")
+    button.grid(row=1, column=0)
+    
+    button=Button(cadre ,text="Retour au Profil",bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , width=17,command=lambda id=id : profil(id), relief="solid")
+    button.grid(row=2, column=0)
 
-        button=Button(cadre,text="Déconnexion" ,bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , relief="solid", width=17,command=reset)
-        button.grid(row=3, column=0)
-        
-        title_1=Label(cadre,text="Num", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=5)
-        title_1.grid(row=row_l, column=2)
+    button=Button(cadre,text="Déconnexion" ,bg="#ffd177" ,font=("times new roman", 11) ,bd=3 , relief="solid", width=17,command=reset)
+    button.grid(row=3, column=0)
+    
+    title_1=Label(cadre,text="Num", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=5)
+    title_1.grid(row=row_l, column=2)
+    
+    title_1=Label(cadre,text="Libellé", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=14)
+    title_1.grid(row=row_l, column=3)
 
-        title_1=Label(cadre,text="Libellé", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=14)
-        title_1.grid(row=row_l, column=3)
+    title_1=Label(cadre,text="Prix Unitaire", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
+    title_1.grid(row=row_l, column=4)
 
-        title_1=Label(cadre,text="Prix Unitaire", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
-        title_1.grid(row=row_l, column=4)
+    title_1=Label(cadre,text="Qte", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
+    title_1.grid(row=row_l, column=5)
+        
+    title_1=Label(cadre,text="Prix T", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
+    title_1.grid(row=row_l, column=6)
+        
+    print(id)
+    cursor=db.cursor()
+    cursor.execute("SELECT * FROM produits WHERE user_id='%s'" %(id))
+    contain=cursor.fetchall()
+    #for x in contain:
+    z=2
+    for num , val in enumerate(contain):
+        row_l+=1
+        z+=24
+        #print(f"{num+1} \t {val[1]} ")
+        
+        id_list=Label(cadre, text=f"{num+1}", bg="silver", font=("Times new roman", 13), width=2)
+        id_list.grid(row=row_l,column=2 )
+        
+        list=Label(cadre,text=f"{val[1]}", bg="silver", fg="black", font=("Times new roman", 13) , width=12)
+        list.grid(row=row_l,column=3 )
 
-        title_1=Label(cadre,text="Qte", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
-        title_1.grid(row=row_l, column=5)
-        
-        title_1=Label(cadre,text="Prix T", bg="#8D857B", fg="black", font=("Times new roman", 13)  ,bd=2 , relief="solid", width=10)
-        title_1.grid(row=row_l, column=6)
-        
-        print(id)
-        cursor=db.cursor()
-        cursor.execute("SELECT * FROM produits WHERE user_id='%s'" %(id))
-        contain=cursor.fetchall()
-        #for x in contain:
-        z=2
-        for num , val in enumerate(contain):
-            row_l+=1
-            z+=24
-            #print(f"{num+1} \t {val[1]} ")
+        list=Label(cadre,text=f"{val[2]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
+        list.grid(row=row_l,column=4 )
+
+        list=Label(cadre,text=f"{val[3]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
+        list.grid(row=row_l,column=5 )
             
-            id_list=Label(cadre, text=f"{num+1}", bg="silver", font=("Times new roman", 13), width=2)
-            id_list.grid(row=row_l,column=2 )
-
-            list=Label(cadre,text=f"{val[1]}", bg="silver", fg="black", font=("Times new roman", 13) , width=12)
-            list.grid(row=row_l,column=3 )
-
-            list=Label(cadre,text=f"{val[2]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
-            list.grid(row=row_l,column=4 )
-
-            list=Label(cadre,text=f"{val[3]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
-            list.grid(row=row_l,column=5 )
-            
-            list=Label(cadre,text=f"{val[2]*val[3]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
-            list.grid(row=row_l,column=6 )
+        list=Label(cadre,text=f"{val[2]*val[3]}", bg="silver", fg="black", font=("Times new roman", 13) , width=10)
+        list.grid(row=row_l,column=6 )
 
 def buy(id):
     global ent_1
